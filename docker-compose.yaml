@@ -1,0 +1,33 @@
+services:
+  api:
+    build: .
+    command: uvicorn src.main:app --host 0.0.0.0 --port 8000 --reload
+    environment:
+      API_KEY: ${API_KEY:-change-me}
+      DATABASE_URL: ${DATABASE_URL:-postgresql+psycopg://paga_lanche:paga_lanche@db:5432/paga_lanche}
+    ports:
+      - "8000:8000"
+    volumes:
+      - .:/app
+    depends_on:
+      db:
+        condition: service_healthy
+
+  db:
+    image: postgres:17-alpine
+    environment:
+      POSTGRES_DB: ${POSTGRES_DB:-paga_lanche}
+      POSTGRES_USER: ${POSTGRES_USER:-paga_lanche}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:-paga_lanche}
+    ports:
+      - "5432:5432"
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U $${POSTGRES_USER} -d $${POSTGRES_DB}"]
+      interval: 5s
+      timeout: 5s
+      retries: 5
+
+volumes:
+  postgres_data:
