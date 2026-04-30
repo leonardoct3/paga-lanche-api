@@ -177,9 +177,18 @@ docker compose build --no-cache api
 The Dockerfile respects the platform `PORT` environment variable and falls back to
 `8000` locally.
 
-For a simple hosted deployment, configure:
+For a simple Railway deployment, configure:
 
 - `API_KEY`
 - `DATABASE_URL`
 
+On Railway, `DATABASE_URL` must come from the Railway PostgreSQL service. Do not
+use the local Compose host `db` in production.
+
 The database tables will be created automatically when the API starts.
+
+Railway setup guide:
+
+```text
+docs/railway-deploy.md
+```
